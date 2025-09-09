@@ -1,15 +1,18 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Serve React build
-const publicPath = path.resolve(__dirname, "../dist/public");
+// Serve React build from dist/public
+const publicPath = path.resolve(__dirname, "public");
 app.use(express.static(publicPath));
 
-// Example API route
 app.get("/api/hello", (_req: Request, res: Response) => {
   res.json({ message: "Hello World" });
 });
