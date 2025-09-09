@@ -2,10 +2,11 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
+const isDev = process.env.NODE_ENV !== "production";
+
 const plugins = [react()];
 
-if (process.env.NODE_ENV !== "production") {
-  // only require dev-only plugins in development
+if (isDev) {
   try {
     const runtimeErrorOverlay = await import("@replit/vite-plugin-runtime-error-modal").then(m => m.default);
     plugins.push(runtimeErrorOverlay());
@@ -15,10 +16,17 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export default defineConfig({
-  root: path.resolve("./src"),
+  root: path.resolve("src"), // must match where index.html is
   build: {
-    outDir: path.resolve("./dist/public"),
+    outDir: path.resolve("dist/public"),
     emptyOutDir: true,
   },
   plugins,
+  resolve: {
+    alias: {
+      "@": path.resolve("src"),
+      "@shared": path.resolve("shared"),
+      "@assets": path.resolve("attached_assets"),
+    },
+  },
 });
