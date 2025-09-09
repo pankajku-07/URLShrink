@@ -13,8 +13,14 @@ export default function ResultDisplay({ originalUrl, shortenedUrl }: ResultDispl
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-  // Create a cleaner display version while keeping the actual URL for copying
-  const displayUrl = shortenedUrl.replace(/^https?:\/\//, '').replace(/\.replit\.dev/, '.r.dev');
+  // Create a much shorter display version while keeping the actual URL for copying
+  const getShortCode = (url: string) => {
+    // Extract just the short code from the URL
+    const parts = url.split('/');
+    return parts[parts.length - 1]; // Get the last part (the short code)
+  };
+  
+  const displayUrl = `ly/${getShortCode(shortenedUrl)}`;
 
   const handleCopy = async () => {
     try {
