@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertUrlSchema } from "@shared/schema";
 import { z } from "zod";
+import QRCode from "qrcode";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Shorten URL endpoint - API routes should come first
@@ -14,16 +15,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Return the actual working URL
       const shortenedUrl = `${req.protocol}://${req.get('host')}/${url.shortCode}`;
       
+      // Generate QR code
+      const qrCodeDataUrl = await QRCode.toDataURL(shortenedUrl, {
+        width: 256,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF'
+        }
+      });
+      
       res.json({
         originalUrl: url.originalUrl,
         shortCode: url.shortCode,
         shortenedUrl,
+        qrCode: qrCodeDataUrl,
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
         res.status(400).json({ 
           message: error.errors[0]?.message || "Invalid URL format" 
         });
+      } else if (error instanceof Error) {
+        res.status(400).json({ message: error.message });
       } else {
         res.status(500).json({ message: "Internal server error" });
       }
