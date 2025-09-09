@@ -4,6 +4,11 @@ import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 export default defineConfig({
+   root: path.resolve(__dirname, 'src'), // <-- Vite root
+  build: {
+    outDir: path.resolve(__dirname, 'dist/public'),
+    emptyOutDir: true,
+  },
   plugins: [
     react(),
     runtimeErrorOverlay(),
