@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle, Copy, Check } from "lucide-react";
+import { CheckCircle, Copy, Check, Download, QrCode } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -7,9 +7,10 @@ import { useToast } from "@/hooks/use-toast";
 interface ResultDisplayProps {
   originalUrl: string;
   shortenedUrl: string;
+  qrCode: string;
 }
 
-export default function ResultDisplay({ originalUrl, shortenedUrl }: ResultDisplayProps) {
+export default function ResultDisplay({ originalUrl, shortenedUrl, qrCode }: ResultDisplayProps) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
@@ -36,6 +37,28 @@ export default function ResultDisplay({ originalUrl, shortenedUrl }: ResultDispl
       toast({
         title: "Error",
         description: "Failed to copy URL to clipboard",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDownloadQR = () => {
+    try {
+      const link = document.createElement('a');
+      link.href = qrCode;
+      link.download = `qr-code-${getShortCode(shortenedUrl)}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Success",
+        description: "QR code downloaded!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to download QR code",
         variant: "destructive",
       });
     }
@@ -92,6 +115,37 @@ export default function ResultDisplay({ originalUrl, shortenedUrl }: ResultDispl
                     </>
                   )}
                 </Button>
+              </div>
+            </div>
+
+            {/* QR Code Section */}
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-1">
+                QR Code
+              </label>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
+                <div className="bg-white p-4 rounded-lg border border-border">
+                  <img 
+                    src={qrCode} 
+                    alt="QR Code for shortened URL" 
+                    className="w-24 h-24"
+                    data-testid="img-qr-code"
+                  />
+                </div>
+                <div className="flex flex-col space-y-2">
+                  <p className="text-sm text-muted-foreground">
+                    Scan this QR code to open the link directly
+                  </p>
+                  <Button 
+                    variant="outline"
+                    onClick={handleDownloadQR}
+                    className="w-fit"
+                    data-testid="button-download-qr"
+                  >
+                    <Download className="h-4 w-4" />
+                    <span className="ml-2">Download QR Code</span>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

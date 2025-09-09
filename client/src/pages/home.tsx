@@ -11,6 +11,7 @@ interface ShortenResponse {
   originalUrl: string;
   shortCode: string;
   shortenedUrl: string;
+  qrCode: string;
 }
 
 export default function Home() {
@@ -18,8 +19,11 @@ export default function Home() {
   const { toast } = useToast();
 
   const shortenMutation = useMutation({
-    mutationFn: async (originalUrl: string) => {
-      const response = await apiRequest("POST", "/api/shorten", { originalUrl });
+    mutationFn: async (data: { url: string; customShortCode?: string }) => {
+      const response = await apiRequest("POST", "/api/shorten", { 
+        originalUrl: data.url,
+        customShortCode: data.customShortCode 
+      });
       return response.json() as Promise<ShortenResponse>;
     },
     onSuccess: (data) => {
@@ -34,8 +38,8 @@ export default function Home() {
     },
   });
 
-  const handleShortenUrl = (url: string) => {
-    shortenMutation.mutate(url);
+  const handleShortenUrl = (data: { url: string; customShortCode?: string }) => {
+    shortenMutation.mutate(data);
   };
 
   return (
@@ -81,6 +85,7 @@ export default function Home() {
           <ResultDisplay 
             originalUrl={result.originalUrl}
             shortenedUrl={result.shortenedUrl}
+            qrCode={result.qrCode}
           />
         )}
 
