@@ -6,7 +6,8 @@ export default defineConfig({
   root: path.resolve(__dirname, "client"), // React app folder
   build: {
     outDir: path.resolve(__dirname, "dist/public"), // Express serves this
-    emptyOutDir: true,root: path.resolve(__dirname, "client"), // React app folder
+    emptyOutDir: true,root: path.resolve(__dirname, "client"),// React app folder
+  },
   build: {
     outDir: path.resolve(__dirname, "dist/public"), // Express serves this
     emptyOutDir: true,
@@ -25,4 +26,4 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
-});
+  });
