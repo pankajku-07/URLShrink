@@ -3,11 +3,12 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  root: path.resolve(__dirname, "client/src"), // React source folder
+  root: path.resolve("./client"), // <-- client folder contains src and index.html
   build: {
-    outDir: path.resolve(__dirname, "dist/public"), // Output for Express
+    outDir: path.resolve("../dist/public"), // build goes outside client into dist/public
     emptyOutDir: true,
   },
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client/src"),
@@ -17,11 +18,8 @@ export default defineConfig({
   },
   server: {
     fs: {
-      strict: true
-    }
+      strict: true,
+      deny: ["**/.*"],
+    },
   },
-  css: {
-    postcss: path.resolve(__dirname, "postcss.config.js") // ensure PostCSS is loaded
-  },
-  plugins: [react()]
 });
