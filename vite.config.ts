@@ -1,41 +1,24 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
-import { fileURLToPath } from "url";
 
-// ESM-safe __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const plugins = [react()];
+
+if (process.env.NODE_ENV !== "production") {
+  // only require dev-only plugins in development
+  try {
+    const runtimeErrorOverlay = await import("@replit/vite-plugin-runtime-error-modal").then(m => m.default);
+    plugins.push(runtimeErrorOverlay());
+  } catch (err) {
+    console.warn("Dev-only plugin not installed, skipping...");
+  }
+}
 
 export default defineConfig({
-  root: path.resolve(__dirname, "client"), // <-- single root
+  root: path.resolve("./src"),
   build: {
-    outDir: path.resolve(__dirname, "dist/public"),
+    outDir: path.resolve("./dist/public"),
     emptyOutDir: true,
   },
-  plugins: [
-    react(),
-    runtimeErrorOverlay(),
-    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer()
-          ),
-        ]
-      : []),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "client/src"),
-      "@shared": path.resolve(__dirname, "shared"),
-      "@assets": path.resolve(__dirname, "attached_assets"),
-    },
-  },
-  server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
-    },
-  },
+  plugins,
 });
