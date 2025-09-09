@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Serve React build
-const publicPath = path.resolve("dist/public");
+const publicPath = path.resolve(__dirname, "../dist/public");
 app.use(express.static(publicPath));
 
 // Example API route
