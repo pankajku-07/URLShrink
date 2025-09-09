@@ -3,9 +3,12 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  root: path.resolve("./client"), // <-- client folder contains src and index.html
+  root: path.resolve(__dirname, "client"), // React app folder
   build: {
-    outDir: path.resolve("../dist/public"), // build goes outside client into dist/public
+    outDir: path.resolve(__dirname, "dist/public"), // Express serves this
+    emptyOutDir: true,root: path.resolve(__dirname, "client"), // React app folder
+  build: {
+    outDir: path.resolve(__dirname, "dist/public"), // Express serves this
     emptyOutDir: true,
   },
   plugins: [react()],
