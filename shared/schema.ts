@@ -13,6 +13,11 @@ export const insertUrlSchema = createInsertSchema(urls).pick({
   originalUrl: true,
 }).extend({
   originalUrl: z.string().url("Please enter a valid URL"),
+  customShortCode: z.string()
+    .optional()
+    .refine((val) => !val || /^[a-zA-Z0-9]{3,20}$/.test(val), {
+      message: "Custom code must be 3-20 alphanumeric characters"
+    }),
 });
 
 export type InsertUrl = z.infer<typeof insertUrlSchema>;

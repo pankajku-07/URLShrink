@@ -49,11 +49,21 @@ export class MemStorage implements IStorage {
       return existing;
     }
 
-    // Generate unique short code
     let shortCode: string;
-    do {
-      shortCode = this.generateShortCode();
-    } while (this.shortCodes.has(shortCode));
+    
+    // Handle custom short code
+    if (insertUrl.customShortCode) {
+      // Check if custom code is already taken
+      if (this.shortCodes.has(insertUrl.customShortCode)) {
+        throw new Error(`Custom code "${insertUrl.customShortCode}" is already taken. Please choose a different one.`);
+      }
+      shortCode = insertUrl.customShortCode;
+    } else {
+      // Generate unique short code
+      do {
+        shortCode = this.generateShortCode();
+      } while (this.shortCodes.has(shortCode));
+    }
 
     const id = randomBytes(16).toString('hex');
     const url: Url = {
