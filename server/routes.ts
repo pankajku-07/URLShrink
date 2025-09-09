@@ -11,8 +11,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = insertUrlSchema.parse(req.body);
       const url = await storage.createUrl(validatedData);
       
-      // Return a much shorter URL - just use a simple domain format
-      const shortenedUrl = `link.ly/${url.shortCode}`;
+      // Return the actual working URL
+      const shortenedUrl = `${req.protocol}://${req.get('host')}/${url.shortCode}`;
       
       res.json({
         originalUrl: url.originalUrl,

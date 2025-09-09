@@ -13,6 +13,9 @@ export default function ResultDisplay({ originalUrl, shortenedUrl }: ResultDispl
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
+  // Create a cleaner display version while keeping the actual URL for copying
+  const displayUrl = shortenedUrl.replace(/^https?:\/\//, '').replace(/\.replit\.dev/, '.r.dev');
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shortenedUrl);
@@ -62,7 +65,7 @@ export default function ResultDisplay({ originalUrl, shortenedUrl }: ResultDispl
               <div className="flex items-center space-x-2">
                 <div className="flex-1 bg-accent border border-border rounded-md p-3">
                   <span className="text-lg font-medium text-primary" data-testid="text-shortened-url">
-                    {shortenedUrl}
+                    {displayUrl}
                   </span>
                 </div>
                 <Button 
